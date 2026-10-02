@@ -1,0 +1,38 @@
+"""
+OptiScale - Optical Prescription to Dynamic Typography Engine
+"""
+
+def compute_typography_styles(sphere: float, cylinder: float, axis: int, reading_add: float = 0.0) -> dict:
+    spherical_equivalent = sphere + (cylinder / 2.0)
+    
+    base_font_size = 16.0
+    base_line_height = 1.5
+    
+    near_scale = max(0.0, reading_add) * 0.25
+    myopic_blur_scale = max(0.0, abs(sphere)) * 0.12 if sphere < -1.5 else 0.0
+    total_scale = 1.0 + near_scale + myopic_blur_scale
+    final_font_size = round(base_font_size * total_scale, 1)
+    
+    abs_cyl = abs(cylinder)
+    if abs_cyl >= 2.0:
+        font_weight = 700
+        letter_spacing = 1.2
+        theme = "ultra_high_contrast"
+    elif abs_cyl >= 0.75:
+        font_weight = 600
+        letter_spacing = 0.6
+        theme = "high_contrast"
+    else:
+        font_weight = 400
+        letter_spacing = 0.0
+        theme = "standard"
+        
+    final_line_height = round(base_line_height + (reading_add * 0.1), 2)
+    
+    return {
+        "spherical_equivalent": round(spherical_equivalent, 2),
+        "font_size_px": f"{final_font_size}px",
+        "font_weight": font_weight,
+        "line_height": final_line_height,
+        "letter_spacing_px": f"{letter_spacing}px",
+        "theme": theme)
